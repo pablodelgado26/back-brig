@@ -18,17 +18,6 @@ async function main() {
     await prisma.pagamento.deleteMany();
     await prisma.lancamentoCaixa.deleteMany();
     await prisma.faturamento.deleteMany();
-    await prisma.user.deleteMany();
-
-    // Criar usuário de teste
-    console.log("Criando usuário...");
-    const user = await prisma.user.create({
-        data: {
-            name: "Admin MEI",
-            email: "admin@mei.com",
-            password: "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
-        },
-    });
 
     // Criar faturamentos
     console.log("Criando faturamentos...");
@@ -264,7 +253,6 @@ async function main() {
     });
 
     console.log("Seed concluído com sucesso!");
-    console.log(`✅ Criado ${user ? 1 : 0} usuário`);
     console.log(`✅ Criados 3 faturamentos`);
     console.log(`✅ Criados 3 lançamentos de caixa`);
     console.log(`✅ Criados 3 pagamentos`);

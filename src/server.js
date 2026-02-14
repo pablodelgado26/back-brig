@@ -15,8 +15,8 @@ app.use(express.json()); // Parse de JSON
 
 app.use("/", router)
 
-
 // Iniciar o servidor
 app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
+  console.log(`🚀 Sistema MEI - Servidor rodando na porta ${port}`);
+  console.log(`📍 http://localhost:${port}`);
 });

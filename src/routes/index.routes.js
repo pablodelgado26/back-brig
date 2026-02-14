@@ -1,7 +1,6 @@
 import express from "express"
 
 // Importar todas as rotas
-import authRouter from "./auth.routes.js"
 import dashboardRouter from "./dashboardRoutes.js"
 import faturamentoRouter from "./faturamentoRoutes.js"
 import caixaRouter from "./caixaRoutes.js"
@@ -14,18 +13,30 @@ import contratoRouter from "./contratoRoutes.js"
 import documentoLicitacaoRouter from "./documentoLicitacaoRoutes.js"
 import relatorioRouter from "./relatorioRoutes.js"
 
-// Importar middleware de autenticação
-import authMiddleware from "../middleware/authMiddleware.js"
-
 const router = express.Router();
 
-// Rotas públicas
-router.use("/auth", authRouter);
+// Rota principal - teste da API
+router.get("/", (req, res) => {
+    res.json({
+        message: "🚀 Sistema MEI - API funcionando!",
+        timestamp: new Date().toISOString(),
+        modules: {
+            dashboard: "/dashboard",
+            faturamento: "/faturamento",
+            caixa: "/caixa",
+            pagamentos: "/pagamentos", 
+            recebimentos: "/recebimentos",
+            produtos: "/produtos",
+            funcionarios: "/funcionarios",
+            bens: "/bens",
+            contratos: "/contratos",
+            "documentos-licitacao": "/documentos-licitacao",
+            relatorios: "/relatorios"
+        }
+    });
+});
 
-// Rotas protegidas (aplicar middleware de autenticação)
-router.use(authMiddleware);
-
-// Rotas do sistema MEI
+// Rotas do sistema MEI (sem autenticação)
 router.use("/dashboard", dashboardRouter);
 router.use("/faturamento", faturamentoRouter);
 router.use("/caixa", caixaRouter);

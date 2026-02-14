@@ -1,11 +1,13 @@
 {
-  "name": "api-boilerplate",
+  "name": "mei-system-backend",
   "version": "1.0.0",
-  "description": "Projeto base de uma API com MVC",
+  "description": "Sistema MEI - Backend simplificado",
   "keywords": [
     "nodejs",
     "javascript",
-    "prisma"
+    "prisma",
+    "mei",
+    "sistema"
   ],
   "license": "MIT",
   "author": "Pablo Delgado",
@@ -14,21 +16,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.js",
-    "prisma:seed": "node prisma/seed/seed.js"
+    "start": "node src/server.js",
+    "prisma:seed": "node prisma/seed/seedMEI.js",
+    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:generate": "npx prisma generate"
   },
   "prisma": {
-    "seed": "node prisma/seed/seed.js"
+    "seed": "node prisma/seed/seedMEI.js"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
-    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.9",
-    "package": "^1.0.1",
-    "prisma": "^6.5.0",
-    "vsce": "^2.15.0"
+    "prisma": "^6.5.0"
   }
 }
