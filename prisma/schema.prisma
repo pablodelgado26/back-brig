@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,39 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Collection {
-  id          Int     @id @default(autoincrement())
-  name        String  @unique
-  description String?
-  releaseYear Int
-
-  // Segundo: marcação da lista de dados da tabela dependente
-  cards Card[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("collections")
-}
-
-model Card {
-  id            Int     @id @default(autoincrement())
-  name          String  @unique
-  rarity        String
-  attackPoints  Int
-  defensePoints Int
-  imageUrl      String?
-
-  // Primeiro: configuração da tabela dependente
-  collectionId Int      
-  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("cards")
-}
-
+// Modelo de usuários
 model User {
   id Int @id @default(autoincrement())
   name String
@@ -56,4 +21,228 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+// Modelo de faturamento mensal
+model Faturamento {
+  id Int @id @default(autoincrement())
+  mes String
+  ano String
+  receitaBruta Float
+  despesas Float @default(0)
+  receitaLiquida Float
+  status String @default("Pendente") // Pendente, Declarado
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([mes, ano])
+  @@map("faturamentos")
+}
+
+// Modelo de lançamentos do livro caixa
+model LancamentoCaixa {
+  id Int @id @default(autoincrement())
+  data DateTime
+  tipo String // Entrada, Saída
+  descricao String
+  categoria String
+  valor Float
+  formaPagamento String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("lancamentos_caixa")
+}
+
+// Modelo de pagamentos (contas a pagar)
+model Pagamento {
+  id Int @id @default(autoincrement())
+  descricao String
+  fornecedor String
+  vencimento DateTime
+  valor Float
+  status String @default("Pendente") // Pendente, Pago, Vencido
+  categoria String // Fixo, Variável, Imposto
+  dataPagamento DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("pagamentos")
+}
+
+// Modelo de recebimentos (contas a receber)
+model Recebimento {
+  id Int @id @default(autoincrement())
+  descricao String
+  cliente String
+  vencimento DateTime
+  valor Float
+  status String @default("Pendente") // Pendente, Recebido
+  notaFiscal String?
+  dataRecebimento DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("recebimentos")
+}
+
+// Modelo de produtos em estoque
+model Produto {
+  id Int @id @default(autoincrement())
+  codigo String @unique
+  nome String
+  categoria String
+  quantidade Int @default(0)
+  estoqueMinimo Int @default(0)
+  unidade String @default("UN")
+  valorUnitario Float @default(0)
+  valorTotal Float @default(0)
+  
+  // Relação com preços
+  precos Preco[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("produtos")
+}
+
+// Modelo de documentos para licitação
+model DocumentoLicitacao {
+  id Int @id @default(autoincrement())
+  tipo String
+  numero String
+  emissao DateTime
+  validade DateTime
+  status String // Válido, Vencendo, Vencido
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("documentos_licitacao")
+}
+
+// Modelo de funcionários
+model Funcionario {
+  id Int @id @default(autoincrement())
+  nome String
+  cpf String @unique
+  cargo String
+  admissao DateTime
+  salario Float
+  status String @default("Ativo") // Ativo, Inativo
+  
+  // Relação com lançamentos trabalhistas
+  lancamentos LancamentoTrabalhista[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("funcionarios")
+}
+
+// Modelo de bens patrimoniais
+model Bem {
+  id Int @id @default(autoincrement())
+  descricao String
+  categoria String
+  dataAquisicao DateTime
+  valor Float
+  depreciacaoAnual Float @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("bens")
+}
+
+// Modelo de preços
+model Preco {
+  id Int @id @default(autoincrement())
+  produtoId Int
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  custo Float
+  margemLucro Float
+  precoVenda Float
+  variacao Float @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("precos")
+}
+
+// Modelo de contratos
+model Contrato {
+  id Int @id @default(autoincrement())
+  tipo String // Fornecedor, Funcionário, Prestador
+  parte String
+  objeto String
+  inicio DateTime
+  termino DateTime
+  valor Float
+  status String @default("Ativo") // Ativo, Inativo, Vencido
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("contratos")
+}
+
+// Modelo de cadastros gerais
+model CadastroGeral {
+  id Int @id @default(autoincrement())
+  tipo String // Cliente, Fornecedor, etc
+  nome String
+  documento String
+  email String?
+  telefone String?
+  endereco String?
+  observacoes String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("cadastros_gerais")
+}
+
+// Modelo de lançamentos fiscais
+model LancamentoFiscal {
+  id Int @id @default(autoincrement())
+  tipo String // Entrada, Saída
+  numeroNota String
+  data DateTime
+  cliente String?
+  fornecedor String?
+  valor Float
+  icms Float @default(0)
+  ipi Float @default(0)
+  observacoes String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("lancamentos_fiscais")
+}
+
+// Modelo de lançamentos trabalhistas
+model LancamentoTrabalhista {
+  id Int @id @default(autoincrement())
+  funcionarioId Int
+  funcionario Funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
+  tipo String // Salário, Férias, 13º, etc
+  mes String
+  ano String
+  valor Float
+  descontos Float @default(0)
+  observacoes String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("lancamentos_trabalhistas")
 }
